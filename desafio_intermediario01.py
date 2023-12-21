@@ -1,9 +1,8 @@
-C = int(input()) # Inicialização da variavel do numero de testes
+"""# Inicialização da variavel do numero de testes"""
+C = int(input())
 
 for i in range (C): #Inicialização do bloco para realização dos testes
-    
     i = int(input()) # Entrada da variavel que representa o nivel de energia
-    
     if i > 8000: # Inicialização do bloco para verificar se tem mais de 8000 de energia ou não
 
         print("Mais de 8000!")
@@ -11,5 +10,4 @@ for i in range (C): #Inicialização do bloco para realização dos testes
     else:
         print("Inseto")
 
-C = C -1 
-
+C = C -1
