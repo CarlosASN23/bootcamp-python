@@ -36,4 +36,3 @@ elif a == "invertebrado": # Inicialização do bloco para a verificação dos an
 
 else:
     print("Não foi possivel identificar o animal descrito!")
-
