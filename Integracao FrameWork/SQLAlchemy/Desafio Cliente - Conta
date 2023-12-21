@@ -1,0 +1,168 @@
+"""Código referente a implementação de uma aplicação de integração
+   com SQLite em Python com base em um esquema relacional disponibilizado pela
+   instrutora. Utilizando-se para a criação das classes um esquema dentro
+   do contexto Cliente - Conta."""
+import sqlalchemy
+
+from sqlalchemy import (
+                        Integer,
+                        Float,
+                        String,
+                        ForeignKey)
+
+from sqlalchemy.orm import (
+                            declarative_base,
+                            relationship,
+                            Session)
+
+Base = declarative_base()
+
+class Cliente(Base):
+    """ Criação da Classe Cliente (Main) que receberá os atributos:
+        Id sendo este o atributo PrimaryKey
+        Nome (String) que corresponde ao nome do cliente
+        CPF (String) que representa o documento unico do cliente
+        Endereço correpondendo ao endereço residencial do cliente """
+    __tablename__ = 'cliente'
+
+    # Atributos da classe
+    id = sqlalchemy.Column(Integer, primary_key=True, autoincrement=True)
+    nome = sqlalchemy.Column(String)
+    cpf = sqlalchemy.Column(String(9), unique=True)
+    endereco = sqlalchemy.Column(String(9))
+
+    # Criando uma relação com a classe Conta
+    conta = relationship("Conta", back_populates="cliente", cascade="all, delete-orphan")
+
+    # Construtor da Classe Cliente
+    def __repr__(self):
+        return (f"Cliente:[Id = {self.id}, Nome = {self.nome}, "
+                f"CPF = {self.cpf}, Endereço = {self.endereco}]")
+
+
+# Criação da classe Conta
+class Conta(Base):
+    """ Criação da Classe Conta contendo as informações
+        do Tipo de conta (Conta corrente / Conta Poupança)
+        do número da Agência (Para conta Corrente = 0001 / Conta poupança = 0003
+        do número da conta e do Saldo disponivel na conta
+        Esta classse será vinculada ao id da Classe Cliente"""
+    __tablename__ = 'conta'
+    # Atributos da Classe
+    id = sqlalchemy.Column(Integer, primary_key=True, autoincrement=True)
+    tipo = sqlalchemy.Column(String)
+    agencia = sqlalchemy.Column(String)
+    num = sqlalchemy.Column(Integer)
+    id_cliente = sqlalchemy.Column(Integer, ForeignKey("cliente.id"), nullable=False)
+    saldo = sqlalchemy.Column(Float)
+
+    # Criando um relacionamento entre a Classe Cliente
+    cliente = relationship("Cliente", back_populates="conta")
+
+    # Construtor da classe Cliente
+    def __repr__(self):
+        return (f"Conta:[Id={self.id}, Tipo={self.tipo}, "
+                f"Agência={self.agencia}, Número={self.num}, "
+                f"Saldo={self.saldo}]")
+
+
+# Conexão com o banco de dados
+engine = sqlalchemy.create_engine("sqlite://")
+
+# Criando as Tabelas do banco de dados
+Base.metadata.create_all(engine)
+
+# Criação do inspetor que fará a inspeção do método Engine(Tabelas)
+# Investiga o esquema de banco de dados
+inspetor_engine = sqlalchemy.inspect(engine)
+
+
+with Session(engine) as session:
+
+    # Criando os objetos (Cliente - Contas)
+    Guilherme = Cliente(
+        nome="Guilherme Silva",
+        cpf="112.223.223-77",
+        endereco="Rua das Pitangas / Caranduva-SP",
+        conta=[Conta(
+            tipo="Conta Corrente",
+            agencia="0001",
+            num="8772-88",
+            saldo=188.77,
+        )]
+    ),
+    Gabriela = Cliente(
+        nome="Gabriela Oliveira Silveira",
+        cpf="888.772.552-88",
+        endereco="Rua dos Oliveiras / Cidade Nova-RJ",
+        conta=[Conta(
+            tipo="Conta Poupança",
+            agencia="0003",
+            num="7722-22",
+            saldo=12999.22,
+        )]
+    ),
+    Silvia = Cliente(
+        nome="Silvia Smith",
+        cpf="122.233.444-55",
+        endereco="Rua sorriso bom / Iracema-PA",
+        conta=[Conta(
+            tipo="Conta Corrente",
+            agencia="0001",
+            num="88723-77",
+            saldo=876.44,
+        )]
+    ),
+    Octavia = Cliente(
+        nome="Octavia Smith Sant'Anna",
+        cpf="189.655.335-55",
+        endereco="Avenida Augusto Lima/ São Paulo-SP",
+        conta=[Conta(
+            tipo="Conta Poupança",
+            agencia="0003",
+            num="76229-90",
+            saldo=7622.66,
+        )]
+    ),
+    Orlando = Cliente(
+        nome="Orlando Pereira Oliveira",
+        cpf="783.665.992-22",
+        endereco="Avenida das Nações/ Tubarão-SC",
+        conta=[Conta(
+            tipo="Conta Poupança",
+            agencia="0003",
+            num="7822-11",
+            saldo=6722.99,
+        )]
+    ),
+
+    # Enviando ao banco de dados (persistências)
+    session.add_all(Orlando)
+    session.add_all(Guilherme)
+    session.add_all(Gabriela)
+    session.add_all(Silvia)
+    session.add_all(Octavia)
+
+    # Commitando as infos enviadas ao banco de dados
+    session.commit()
+
+print("\nRecuperando dados do cliente de forma ordenada pelo id de forma crescente")
+ordenada = sqlalchemy.select(Cliente).order_by(Cliente.id.asc())
+for result in session.scalars(ordenada):
+    print(result)
+
+print("\nRecuperando os dados dos Usuários")
+stmt = sqlalchemy.select(Cliente).where(Cliente.nome.in_(['Orlando', 'Gabriela']))
+for user in session.scalars(stmt):
+    print(user)
+
+print("\nRecuperando informações a partir da Join")
+join_stmt = sqlalchemy.select(Conta.saldo, Cliente.nome).join_from(Conta, Cliente)
+for resultado in session.scalars(join_stmt):
+    print(resultado)
+
+print("\nExecutanto statement a partir da connection")
+connection = engine.connect()
+results = connection.execute(join_stmt).fetchall()
+for resulta in results:
+    print(resulta)
