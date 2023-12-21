@@ -116,6 +116,9 @@ class Conta():
             self._saldo  += valor
             print("\n Depósito realizado com sucesso!")
             return True
+        else:
+            print("\nNão foi possivel realizar a operação")
+            return False
 
     ## Criação da classe filha ContaCorrente
 class ContaCorrente(Conta):
