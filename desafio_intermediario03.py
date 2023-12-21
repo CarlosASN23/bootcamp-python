@@ -1,5 +1,7 @@
-#Neste problema, você deverá ler 3 palavras que definem o tipo de animal possível segundo o esquema abaixo, 
-#da esquerda para a direita.  Em seguida conclua qual dos animais seguintes foi escolhido, através das três palavras fornecidas.
+"""Neste problema, você deverá ler 3 palavras que definem o tipo de animal possível
+segundo o esquema abaixo, 
+da esquerda para a direita.Em seguida conclua qual dos animais seguintes foi escolhido, 
+através das três palavras fornecidas."""
 
 a = input() # Entrada da variavel a
 b = input() # Entrada da variavel b
@@ -29,12 +31,9 @@ elif a == "invertebrado": # Inicialização do bloco para a verificação dos an
 
     elif b == "anelidio" and c == "hematofago":
         print("sanguessuga")
-        
     elif b == "anelideo" and c == "onivero":
         print("minhoca")
 
 else:
     print("Não foi possivel identificar o animal descrito!")
-
-
 
