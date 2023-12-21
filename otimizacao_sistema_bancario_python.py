@@ -100,7 +100,7 @@ def criar_contas(agencia,numero_conta,usuarios):
 
     if usuario:
         print("\n |||  Conta criada com sucesso  |||")
-        return{"Agência":agencia,"Numero_conta":numero_conta,"Usuário":usuario} 
+        return{"Agência":agencia,"Numero_conta":numero_conta,"Usuário":usuario}
     print("\n Usuário não encontrado, digite um CPF válido!")
 
 def contas_cadastradas(contas):
@@ -182,4 +182,3 @@ def main():
             print("Opção selecionada inválida, selecione uma opção válida!")
 
 main()
-
