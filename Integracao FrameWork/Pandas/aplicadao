@@ -1,0 +1,34 @@
+# Importando biblioteca Pandas
+import pandas as pd
+
+amazonas = pd.read_excel('/content/Amazonas.xlsx')
+mato_grosso = pd.read_excel('/content/Mato Grosso.xlsx')
+paraiba = pd.read_excel('/content/Paraiba.xlsx')
+rio_grande_do_sul = pd.read_excel('/content/Rio Grande do Sul.xlsx')
+sao_paulo = pd.read_excel('/content/São Paulo.xlsx')
+
+amazonas.head()
+# Concatenando arquivos Excel
+df = pd.concat([amazonas,mato_grosso,paraiba,rio_grande_do_sul,sao_paulo])
+
+# Exibindo as 5 primeiras linhas
+df.head()
+
+# Exibindo as 5 ultimas linhas
+df.tail()
+
+# Verificando o tipo de dado de cada coluna
+df.dtypes
+
+# Consultar linhas com valores faltantes
+df.isnull().sum
+
+# Exibindo as 15 primeiras linhas
+df.sample(15)
+
+#Retornando o menor indice do "Branco"
+df["Branca"].max()
+
+#nlargest
+df.nlargest(3,'Branca')
+
