@@ -1,0 +1,78 @@
+""" Implementando um banco de dados NoSQL com MongoDB de forma a fornecer
+    uma visão agregada do modelo relacional. A primeira parte consiste na
+    importação das bibliotecas necessárias para a criação do banco de dados
+    e criaçãos dos métodos"""
+import datetime
+import pprint
+import pymongo as pyM
+
+uri = pyM.MongoClient('mongodb+srv://carlosalbertosn10:oEnVdeFoXBrfg'
+                      'fJ7@cluster0.9gdl1eo.mongodb.net/')
+
+
+db = uri.test
+collection = db.test_collection
+
+post = {
+
+    'cliente': 'Graziely Oliveira',
+    'cpf': '892.222.332-77',
+    'endereco':'Rua das Capivaras 299 / Vitoria-ES',
+    'tipo_conta':'Conta Corrente',
+    'numero_agencia':'0001',
+    'numero_conta':'12223-33',
+    'saldo': 1223.99,
+    'date': datetime.datetime.now(),
+}
+
+# Preparando para submeter as informações
+posts = db.posts
+post_id = posts.insert_one(post).inserted_id
+print(post)
+
+
+# Bulk Inserts
+new_posts ={
+
+    'cliente': 'Samuel Piza Santos',
+    'cpf': '998.776.552-87',
+    'endereco':'Avenida Santos Dummont 1299 / Natal-RN',
+    'tipo_conta':'Conta Poupança',
+    'numero_agencia':'0003',
+    'numero_conta':'12342-83',
+    'saldo': 8972.21,
+    'date': datetime.datetime.now(),
+}, {
+    'cliente': 'Erika Santos',
+    'cpf': '909.882.777-99',
+    'endereco':'Rua das Oliveiras 982 / Rio Branco-AC',
+    'tipo_conta':'Conta Corrente',
+    'numero_agencia':'0001',
+    'numero_conta':'33393-22',
+    'saldo': 872.77,
+    'date': datetime.datetime.now(),
+},{
+    'cliente': 'Vitoria Mascarenhas',
+    'cpf': '001.887.367-78',
+    'endereco':'Avenida dos Pinhais / São Paulo - SP',
+    'tipo_conta':'Conta Poupança',
+    'numero_agencia':'0003',
+    'numero_conta':'22363-22',
+    'saldo': 120.88,
+    'date': datetime.datetime.now(),
+}
+
+# Enviando dados dos novos clientes ao BD e imprimindo os dados cadastrados
+result = posts.insert_many(new_posts)
+print(new_posts)
+
+print("\n Documentos presentes na coleção posts")
+for post in posts.find():
+    pprint.pprint(post)
+
+# Recuperando dados de através do método chave - valor
+print(posts.find_one({"tipo_conta":"Conta Poupança"}))
+print(posts.find_one({"numero_agencia":"0001"}))
+
+# Coleções armazenadas no MongoDB
+print(db.list_collection_names())
